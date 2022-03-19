@@ -1,0 +1,170 @@
+{% extends 'myforms/basic.html' %}
+
+{% block css %}
+.questions,.card-body {
+display: flex;
+flex-direction: column;
+width:70vw;
+margin:auto;
+}
+#main_form {
+width:75vw;
+margin:auto;
+padding-top: 6rem;
+}
+.card {
+margin-top : 2rem;
+}
+#main_form {
+padding-bottom :3rem;
+}
+{% endblock %}
+
+{% block body %}
+{% load static %}
+<div id="main_form">
+    <h4>
+        <center>{{title}}</center>
+    </h4>
+    <div id="heading">
+        <h5>
+            <center>created by - {{name}}
+                </center>
+        </h5>
+    </div>
+        {% for x in resps.responses %}
+        <div class="card questions">
+        {% if x.type == 0 %}
+            <div class="card-header">
+                Single-correct type
+            </div>
+            <div class="card-body">
+                 <label>{{x.question}}</label>
+                <div class="inpu">
+                    <input type="radio" name="{{x.question}}" value={{x.op1}} disabled>{{x.op1}}<br>
+                    <input type="radio" name="{{x.question}}" value={{x.op2}} disabled>{{x.op2}}<br>
+                    <input type="radio" name="{{x.question}}"
+                           value={{x.op3}} disabled>{{x.op3}}<br>
+                    <input type="radio" name="{{x.question}}"
+                           value={{x.op4}} disabled>{{x.op4}}<br>
+                </div>
+                <hr class="dropdown-divider bg-dark">
+                <div>
+                    <p>response:</p>
+                    <p>
+                    {% for r in x.answers %}
+                    {{r}}
+                    {% endfor %}
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+        {% if x.type == 1 %}
+             <div class="card-header">
+                Multiple-correct type
+            </div>
+            <div class="card-body">
+               <label>{{x.question}}</label>
+                <div class="inpu">
+                    <input type="checkbox" name="{{x.question}}" value={{x.op1}} disabled>{{x.op1}}<br>
+                    <input type="checkbox" name="{{x.question}}" value={{x.op2}} disabled>{{x.op2}}<br>
+                    <input type="checkbox" name="{{x.question}}"
+                           value={{x.op3}} disabled>{{x.op3}}<br>
+                    <input type="checkbox" name="{{x.question}}"
+                           value={{x.op4}} disabled>{{x.op4}}<br>
+                </div>
+                <hr class="dropdown-divider bg-dark">
+                <div>
+                    <p>response:</p>
+                    <p>
+                    {% for r in x.answers %}
+                    {{r}}
+                    {% endfor %}
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+        {% if x.type == 2 %}
+            <div class="card-header">
+                Text type
+            </div>
+            <div class="card-body">
+                <label>{{x.question}}</label>
+                <div class="inpu">
+                    <input type="text" name="{{x.question}}" disabled>
+                </div>
+                <hr class="dropdown-divider bg-dark">
+                <div>
+                    <p>response:</p>
+                    {% for r in x.answers %}
+                    <p>{{r}}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        </div>
+        {% endfor %}
+</div>
+{% endblock %}
+
+{% block script %}
+function validate(){
+  var fin = [];
+  var y = document.getElementById('myform');
+  i = 0;
+  {% for x in questions %}
+    {% if x.type == 0 %}
+    fin.push(y.elements[i].value);
+    i++;
+    {% endif %}
+    {% if x.type == 1 %}
+      for(var j = 0;j<4;j++){
+        if(y.elements[i].checked){
+          fin.push(y.elements[i].value);
+        }
+          i = i + j;
+      }
+    {% endif %}
+    {% if x.type == 2 %}
+      var temp = []
+      for(var j = 0;j<4;j++){
+        if(y.elements[i].checked){
+          temp.push(y.elements[i].value)
+        }
+          i = i + j;
+      }
+      fin.push(temp)
+    {% endif %}
+  {% endfor %}
+  var form = document.createElement('form');
+  form.method = "POST";
+  form.action = "/myforms/filled/0";
+  const hiddenField = document.createElement('input');
+  hiddenField.type = 'hidden';
+  hiddenField.name = 'ans';
+  hiddenField.value = fin.toString();
+
+<!--  if(document.getElementsByName('csrfmiddlewaretoken')[0].value != undefined){-->
+  var csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+  var csrf =document.createElement('input')
+  csrf.setAttribute('type','hidden');
+  csrf.setAttribute("name", 'csrfmiddlewaretoken');
+  csrf.setAttribute('value', csrfToken);
+<!--}-->
+<!--  console.log(q);-->
+  form.appendChild(csrf);
+  form.appendChild(hiddenField);
+  document.body.appendChild(form);
+  form.submit();
+<!--console.log(fin)-->
+<!--  y.method = "POST";-->
+<!--  y.action = "/myforms/filled/0";-->
+<!--  const hiddenField = document.createElement('input');-->
+<!--  hiddenField.type = 'hidden';-->
+<!--  hiddenField.name = 'ans';-->
+<!--  hiddenField.value = temp;-->
+
+<!--  y.appendChild(hiddenField);-->
+<!--  y.submit();-->
+};
+{% endblock %}

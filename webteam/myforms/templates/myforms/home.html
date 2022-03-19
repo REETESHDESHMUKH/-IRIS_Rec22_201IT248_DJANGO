@@ -1,0 +1,43 @@
+{% extends 'myforms/basic.html' %}
+
+{% block css %}
+#backgrnd{
+display:flex;
+flex-direction:row;
+padding-top: 5rem;
+padding-left: 15rem;
+}
+.list-group-item {
+padding-left:5rem;
+padding-right:5rem;
+}
+{% endblock %}
+{% block body %}
+<div style="min-height:460px">
+  {% if not user.is_authenticated %}
+  <div class="alert alert-secondary " role="alert">
+  please login or register!!
+</div>
+  {% else %}
+      <div id="backgrnd" >
+        <div class="list-group" style="margin:1rem">
+          <a href="#" class="list-group-item list-group-item-action active " aria-current="true">
+            Created-form : {{numfrm}}
+          </a>
+          {% for x in forms %}
+          <button type="button" class="list-group-item list-group-item-action px-4" onclick="location.href='{% url 'previewform' x.id %}'">{{x.title}}</button>
+          {% endfor %}
+        </div>
+        <div class="list-group" style="margin:1rem">
+          <button type="button" class="list-group-item list-group-item-action active">
+            Filled-form : {{numresp}}
+          </button>
+          {% for x in resps %}
+          <button type="button" class="list-group-item list-group-item-action px-4" onclick="location.href='{% url 'preview' x.id %}'">{{x.form_id.title}}</button>
+          {% endfor %}
+        </div>
+      </div>
+  {% endif %}
+    </div>
+{% endblock %}
+

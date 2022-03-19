@@ -1,0 +1,125 @@
+{% extends 'myforms/basic.html' %}
+
+{% block css %}
+    #maincon {
+    display : flex;
+    flex-direction : column;
+    padding : 7rem;
+    }
+    .btns {
+    display: flex;
+    flex-direction : row;
+    margin-right : 1rem;
+    }
+    #question-display {
+    min-height : 30vh;
+    }
+svg {
+height: 34px;
+fill: white;
+}
+{% endblock %}
+{% block body %}
+{% load static %}
+{% for message in messages %}
+<div class="alert alert-success d-flex alert-dismissible align-items-center" role="alert">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </svg>
+  <div>
+    Your form is created , here is our link <a href="{% url 'filled' message %}">FORM</a> and your form id is {{message}}
+  </div>
+</div>
+{% endfor %}
+<div id = "maincon">
+<div class="btns my-2">
+  <h4>Choose type of question : </h4>
+<div class="dropdown ">
+  <button class="btn btn-secondary dropdown-toggle mx-5" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="true">
+    Choose
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+    <li><a class="dropdown-item" href="#" onclick="single()">Single-correct</a></li>
+    <li><a class="dropdown-item" href="#" onclick="multi()">Multiple-correct</a></li>
+    <li><a class="dropdown-item" href="#" onclick="txttyp()">Text-type</a></li>
+  </ul>
+</div>
+        </div>
+<div id = "question-display" class="card-body">
+</div>
+{% csrf_token %}
+<div  class = "btns">
+    <button type="button" class="btn btn-dark mx-2" onclick="add()">Add</button>
+    <button type="button" class="btn btn-dark" onclick="finish()">Finish</button>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+var x;
+function single(){
+  x = 0;
+  var a = document.getElementById("question-display");
+  a.innerHTML = '<div class="mb-3"><label for="question-desc" class="form-label">Question : </label><input type="text" class="form-control" id="question-desc" aria-describedby="emailHelp"></div><div class="mb-3"><label for="Option-1" class="form-label">Options: </label><input type="text" class="form-control my-1" id="Option-1" aria-describedby="emailHelp"><input type="text" class="form-control my-1" id="Option-2" aria-describedby="emailHelp"><input type="text" class="form-control my-1" id="Option-3" aria-describedby="emailHelp"><input type="text" class="form-control my-1" id="Option-4" aria-describedby="emailHelp"></div>'
+};
+
+function multi() {
+  x = 1;
+  var a = document.getElementById("question-display");
+  a.innerHTML = '<div class="mb-3"><label for="question-desc" class="form-label">Question : </label><input type="text" class="form-control" id="question-desc" aria-describedby="emailHelp"></div><div class="mb-3"><label for="Option-1" class="form-label">Options: </label><input type="text" class="form-control my-1" id="Option-1" aria-describedby="emailHelp"><input type="text" class="form-control my-1" id="Option-2" aria-describedby="emailHelp"><input type="text" class="form-control my-1" id="Option-3" aria-describedby="emailHelp"><input type="text" class="form-control my-1" id="Option-4" aria-describedby="emailHelp"></div>'
+};
+
+function txttyp() {
+  x = 2;
+  var a = document.getElementById("question-display");
+  a.innerHTML = '<div class="mb-3"><label for="question-desc" class="form-label">Question : </label><input type="text" class="form-control" id="question-desc" aria-describedby="emailHelp"></div><div class="mb-3">'
+};
+var q = {questions:[]};
+function add(){
+  var desc = document.getElementById("question-desc").value;
+  var Option1;
+  var Option2;
+  var Option3;
+  var Option4;
+  if(x==1 || x==0){
+    Option1 = document.getElementById("Option-1").value;
+    Option2 = document.getElementById("Option-2").value;
+    Option3 = document.getElementById("Option-3").value;
+    Option4 = document.getElementById("Option-4").value;
+    var z = {question:desc,type:x,op1:Option1,op2:Option2,op3:Option3,op4:Option4};
+    q.questions.push(z);
+  }else{
+    var z = {question:desc,type:x};
+    q.questions.push(z);
+  }
+    document.getElementById("question-display").innerHTML="<h4>Next question!</h4>"
+};
+function finish(){
+  var ttle = prompt("Please give title to your form");
+  const form = document.createElement('form');
+  form.method = "POST";
+  form.action = "/myforms/formcreated/";
+  const hiddenField = document.createElement('input');
+  hiddenField.type = 'hidden';
+  hiddenField.name = 'main';
+  hiddenField.value = JSON.stringify(q);
+
+  const titlefield = document.createElement('input');
+  titlefield.type = 'hidden';
+  titlefield.name = 'tit';
+  titlefield.value = ttle;
+
+var csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+  var csrf =document.createElement('input')
+  csrf.setAttribute('type','hidden');
+  csrf.setAttribute("name", 'csrfmiddlewaretoken');
+  csrf.setAttribute('value', csrfToken);
+
+<!--  console.log(q);-->
+  form.appendChild(csrf);
+  form.appendChild(hiddenField);
+  form.appendChild(titlefield);
+document.body.appendChild(form);
+  form.submit();
+};
+{% endblock %}

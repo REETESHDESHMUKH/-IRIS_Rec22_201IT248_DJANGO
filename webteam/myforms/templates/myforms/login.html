@@ -1,0 +1,82 @@
+{% extends 'myforms/basic.html' %}
+
+{% block css %}
+svg {
+height: 34px;
+fill: white;
+}
+
+.head {
+background-color: burlywood;
+
+}
+.form-label{
+text-decoration: black;
+}
+.card{
+padding:30px 28px;
+}
+.form-control{
+padding:10px 13px;
+}
+.card-body{
+display:flex;
+justify-content:center;
+}
+.cards{
+margin:0px 14px;
+}
+.container {
+margin-bottom : 2rem;
+}
+{% endblock %}
+{% block body %}
+{% load static %}
+{% for message in messages %}
+<div class="alert alert-danger d-flex alert-dismissible align-items-center" role="alert">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+  </svg>
+  <div>
+    {{message}}
+  </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+<div class="container ">
+    {% if user.is_authenticated %}
+    <div class="card">
+        <div class="card-header fw-bold" style="text-align:center">
+            User Details
+        </div>
+        <div class="card-body">
+            <div class="cards">
+                <h6 class="card-title">NAME</h6>
+                <p class="card-text">{{user.username}}</p>
+            </div>
+            <div class="cards">
+                <h6 class="card-title">EMAIL</h6>
+                <p class="card-text">{{user.email}}</p>
+            </div>
+        </div>
+    {% endif %}
+    <h4 class="fw-bold my-3" STYLE="text-align:center">LOGIN!</h4>
+    <hr class="featurette-divider">
+    <form action="/myforms/login/" method="POST">
+        {% csrf_token %}
+        <div class="form-group fw-bold my-2">
+            <label for="username">Username</label>
+            <input type="text" class="form-control my-3" id="username" name="username" placeholder="Enter Your username">
+        </div>
+        <div class="form-group fw-bold my-2">
+            <label for="password">Password</label>
+            <input type="password" class="form-control my-3" id="password" name="password" placeholder="Enter Your password">
+        </div>
+        <button type="submit" class="btn btn-dark my-5">LOGIN</button>
+    </form>
+</div>
+    </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

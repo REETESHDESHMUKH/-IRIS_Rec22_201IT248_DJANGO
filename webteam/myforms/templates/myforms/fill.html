@@ -1,0 +1,93 @@
+{% extends 'myforms/basic.html' %}
+
+{% block css %}
+.questions,.card-body {
+display: flex;
+flex-direction: column;
+width:70vw;
+margin:auto;
+}
+#main_form {
+width:75vw;
+margin:auto;
+padding-top: 6rem;
+}
+.card {
+margin-top : 2rem;
+}
+#main_form {
+padding-bottom :3rem;
+}
+{% endblock %}
+
+{% block body %}
+{% load static %}
+<div id="main_form">
+    <h4>
+        <center>{{title}}</center>
+    </h4>
+    <div id="heading">
+        <h5>
+            <center>created by - {{user}}
+                </center>
+        </h5>
+    </div>
+    <form action = "/myforms/filled/0" id="myform" method = "POST">
+        {% csrf_token %}
+        {% for x in b.questions %}
+        <div class="card questions">
+        {% if x.type == 0 %}
+            <div class="card-header">
+                Single-correct type
+            </div>
+            <div class="card-body">
+                 <label>{{x.question}}</label>
+                <div class="inpu">
+                    <input type="radio" name="{{x.question}}" value={{x.op1}}>{{x.op1}}<br>
+                    <input type="radio" name="{{x.question}}" value={{x.op2}}>{{x.op2}}<br>
+                    <input type="radio" name="{{x.question}}"
+                           value={{x.op3}}>{{x.op3}}<br>
+                    <input type="radio" name="{{x.question}}"
+                           value={{x.op4}}>{{x.op4}}<br>
+                </div>
+                <span style='color: red; margin-left: 5px;'></span>
+            </div>
+        {% endif %}
+        {% if x.type == 1 %}
+             <div class="card-header">
+                Multiple-correct type
+            </div>
+            <div class="card-body">
+               <label>{{x.question}}</label>
+                <div class="inpu">
+                    <input type="checkbox" name="{{x.question}}" value={{x.op1}}>{{x.op1}}<br>
+                    <input type="checkbox" name="{{x.question}}" value={{x.op2}}>{{x.op2}}<br>
+                    <input type="checkbox" name="{{x.question}}"
+                           value={{x.op3}}>{{x.op3}}<br>
+                    <input type="checkbox" name="{{x.question}}"
+                           value={{x.op4}}>{{x.op4}}<br>
+                </div>
+                <span style='color: red; margin-left: 5px;'></span>
+            </div>
+        {% endif %}
+        {% if x.type == 2 %}
+            <div class="card-header">
+                Text type
+            </div>
+            <div class="card-body">
+                <label>{{x.question}}</label>
+                <div class="inpu">
+                    <input type="text" name="{{x.question}}">
+                </div>
+                <span style='color: red; margin-left: 5px;'></span>
+            </div>
+        {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-dark my-5" >submit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
